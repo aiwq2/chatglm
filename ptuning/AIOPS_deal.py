@@ -82,31 +82,33 @@ for index,(time,node_metric_timerange,label) in enumerate(list(zip(timestamp,nod
     content_summary_dict={}
     content_summary_dict['content']=prompt_prefix+prompt_element
     summary='存在异常(1)' if label==1 else '不存在异常(0)'
+    print(content_summary_dict['content'])
+    break
     content_summary_dict['summary']=summary
     nodes_prompt_list.append(content_summary_dict)
 
-np.random.shuffle(nodes_prompt_list)
-print(len(nodes_prompt_list))
-train_num_split_point=int(len(nodes_prompt_list)*0.8)
+# np.random.shuffle(nodes_prompt_list)
+# print(len(nodes_prompt_list))
+# train_num_split_point=int(len(nodes_prompt_list)*0.8)
 
-train_nodes_prompt_list=nodes_prompt_list[:train_num_split_point]
-print(len(train_nodes_prompt_list))
-dev_nodse_prompt_list=nodes_prompt_list[train_num_split_point:]
-print(len(dev_nodse_prompt_list))
-
-
-with open('AIOPS/train.json','w',encoding='utf-8') as f:
-    for prompt_finish in train_nodes_prompt_list:
-        f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
-
-with open('AIOPS/dev.json','w',encoding='utf-8') as f:
-    for prompt_finish in dev_nodse_prompt_list:
-        f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
+# train_nodes_prompt_list=nodes_prompt_list[:train_num_split_point]
+# print(len(train_nodes_prompt_list))
+# dev_nodse_prompt_list=nodes_prompt_list[train_num_split_point:]
+# print(len(dev_nodse_prompt_list))
 
 
+# with open('AIOPS/train.json','w',encoding='utf-8') as f:
+#     for prompt_finish in train_nodes_prompt_list:
+#         f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
 
-with open('AIOPS/content_example.txt','w',encoding='utf-8') as f:
-    f.write(nodes_prompt_list[0]['content'])
+# with open('AIOPS/dev.json','w',encoding='utf-8') as f:
+#     for prompt_finish in dev_nodse_prompt_list:
+#         f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
+
+
+
+# with open('AIOPS/content_example.txt','w',encoding='utf-8') as f:
+#     f.write(nodes_prompt_list[0]['content'])
 
 
 
