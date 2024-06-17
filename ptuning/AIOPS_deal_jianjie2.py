@@ -3,14 +3,14 @@ import os
 import json
 import numpy as np
 
-timestamp=np.load(r'D:\计算所研究生学习\毕业设计\renrui code\my_code\ChatGLM-6B\ptuning\AIOPS\real_timestamp.npy') # (1537,)
-labels=np.load(r'D:\计算所研究生学习\毕业设计\renrui code\my_code\ChatGLM-6B\ptuning\AIOPS\real_label.npy') # (1537,)
-nodes=np.load(r'D:\计算所研究生学习\毕业设计\renrui code\my_code\ChatGLM-6B\ptuning\AIOPS\real_node.npy') # (1537, 17, 124, 3)
-adjcent=np.load(r'D:\计算所研究生学习\毕业设计\renrui code\my_code\ChatGLM-6B\ptuning\AIOPS\total_A.npy') # (17,17)
+timestamp=np.load('AIOPS/real_timestamp.npy') # (1537,)
+labels=np.load('AIOPS/real_label.npy') # (1537,)
+nodes=np.load('AIOPS/real_node.npy') # (1537, 17, 124, 3)
+adjcent=np.load('AIOPS/total_A.npy') # (17,17)
 
 nodes=nodes.transpose(0,1,3,2) # (1537, 17, 3, 124)
 
-input_dict_file=r'D:\计算所研究生学习\毕业设计\renrui code\my_code\ChatGLM-6B\ptuning\AIOPS\node_dict.json'
+input_dict_file='AIOPS/node_dict.json'
 with open(input_dict_file, 'r') as f:
     input_dict = json.load(f)
 
@@ -28,7 +28,8 @@ system_prompt="""你是一位优秀的网络运维工程师,能够根据一定�
 node_nums=len(adjcent)
 metrics_name='ACS,AIOS,AWS,Agent_ping,Asm_Free_Tb,Buffers_used,CPU_Used_Pct,CPU_free_pct,CPU_frequency,CPU_idle_pct,CPU_iowait_time,CPU_kernel_number,CPU_number,CPU_pused,CPU_system_time,CPU_user_time,CPU_util_pct,Cache_used,Call_Per_Sec,Cpu_num,DFParaWrite_Per_Sec,DbFile_Used_Pct,DbTime,Disk_avgqu_sz,Disk_await,Disk_io_util,Disk_rd_ios,Disk_rd_kbs,Disk_svctm,Disk_wr_ios,Disk_wr_kbs,Exec_Per_Sec,FS_max_avail,FS_max_util,FS_total_space,FS_used_pct,FS_used_space,Free_disk_space,Free_inodes,Hang,ICMP_ping,Incoming_network_traffic,LFParaWrite_Per_Sec,LFSync_Per_Sec,Logic_Read_Per_Sec,Login_Per_Sec,MEM_Total,MEM_Used,MEM_Used_Pct,MEM_real_util,Memory_available,Memory_available_pct,Memory_free,Memory_total,Memory_used,Memory_used_pct,New_Tbs_Free_Gb,New_Tbs_Used_Pct,Num_of_processes,Num_of_running_processes,On_Off_State,Outgoing_network_traffic,PGA_Used_Pct,PGA_used_total,Page_pi,Page_po,Physical_Read_Per_Sec,Proc_Used_Pct,Proc_User_Used_Pct,Processor_load_15_min,Processor_load_1_min,Processor_load_5_min,Received_errors_packets,Received_packets,Received_queue,Recv_total,Redo_Per_Sec,Row_Lock,SEQ_Used_Pct,SctRead_Per_Sec,Send_total,Sent_errors_packets,Sent_packets,Sent_queue,SeqRead_Per_Sec,Sess_Active,Sess_Connect,Sess_Used_Temp,Sess_Used_Undo,Session_pct,Shared_memory,Swap_used_pct,System_block_queue_length,System_wait_queue_length,TPS_Per_Sec,Tbs_Free_Gb,Tbs_Used_Pct,TempTbs_Pct,Total_Tbs_Size,Total_disk_space,Total_inodes,UndoTbs_Pct,Used_Tbs_Size,Used_disk_space,Used_disk_space_pct,Used_inodes,Used_inodes_pct,User_Commit,Zombie_Process,container_cpu_used,container_fgc,container_fgct,container_mem_used,container_session_used,container_thread_idle,container_thread_running,container_thread_total,container_thread_used_pct,cost,count,proc,ss_total,succ_rate,tnsping_result_time'
 metric_name_list=metrics_name.split(',')
-prompt_prefix=f'现在微服务中总共有{node_nums}个节点,其中每个节点在某一个timestamp时刻,会存在一共{len(metric_name_list)}个metrics(指标)状态。'
+# prompt_prefix=f'现在微服务中总共有{node_nums}个节点,其中每个节点在某一个timestamp时刻,会存在一共{len(metric_name_list)}个metrics(指标)状态。'
+prompt_prefix=f'微服务中一个节点在某一个timestamp时刻,会存在一共{len(metric_name_list)}个metrics(指标)状态。'
 
 
 
@@ -44,14 +45,15 @@ prompt_prefix=f'现在微服务中总共有{node_nums}个节点,其中每个节�
 # adjcent_prompt+='。'
 # prompt_prefix+=adjcent_prompt
 
-prompt_metric=f"""我们将其记录为metric0,metric1,...一直到metric{len(metric_name_list)-1}。这些mtric可能为例如Buffers_used,CPU_free_pct等,值为保留两位小数后的浮点数。接下来我将给出每个不同节点在三个等间隔timestamp所形成的时间窗口下,所对应的每个timestamp相比于上一个timestamp的metrics变化值,如果没有指出某个metric则说明这个metric在这个timestamp中相比于上一个timestamp没有变化,我们将用这个时间窗口的metric变化情况推断该窗口下是否存在异常。"""
+# prompt_metric=f"""我们将其记录为metric0,metric1,...一直到metric{len(metric_name_list)-1}。这些metric可能为例如Buffers_used,CPU_free_pct等,值为保留两位小数后的浮点数。接下来我将给出每个不同节点在三个等间隔timestamp所形成的时间窗口下,所对应的每个timestamp相比于上一个timestamp的metrics变化值,如果没有指出某个metric则说明这个metric在这个timestamp中相比于上一个timestamp没有变化,我们将用这个时间窗口的metric变化情况推断该窗口下是否存在异常。"""
+prompt_metric=f"""接下来我将给出每个节点在三个等间隔timestamp所形成的时间窗口下,所对应的每个timestamp相比于上一个timestamp存在变化的metrics变化值。"""
 prompt_prefix+=prompt_metric
 # print(prompt_prefix)
 
 nodes_prompt_list=[]
 for index,(time,node_metric_timerange,label) in enumerate(list(zip(timestamp,nodes,labels))):
     prompt_element=''
-    prompt1=f'这是第{index}个时间窗口,其中共包含{len(node_metric_timerange[0])}个时刻:'
+    prompt1=f'第{index}个时间窗口,共包含{len(node_metric_timerange[0])}个时刻:'
     prompt_element+=prompt1
     for i in range(len(node_metric_timerange)):
         node_name=value_name_dict[i]
@@ -124,8 +126,8 @@ with open('AIOPS/jianjie2/dev_jianjie2.json','w',encoding='utf-8') as f:
 
 
 
-with open('AIOPS/jianjie2/content_example_jianjie2.txt','w',encoding='utf-8') as f:
-    f.write(nodes_prompt_list[0]['content'])
+# with open('AIOPS/jianjie2/content_example_jianjie2.txt','w',encoding='utf-8') as f:
+#     f.write(nodes_prompt_list[0]['content'])
 
 
 
