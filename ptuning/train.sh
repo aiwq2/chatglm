@@ -3,15 +3,15 @@ LR=2e-2
 
 CUDA_VISIBLE_DEVICES=0 python3 main.py \
     --do_train \
-    --train_file AIOPS/jianjie2/train_jianjie2.json \
-    --validation_file AIOPS/jianjie2/dev_jianjie2.json \
+    --train_file AIOPS/jianjie4/train_jianjie4.json \
+    --validation_file AIOPS/jianjie4/dev_jianjie4.json \
     --prompt_column content \
     --response_column summary \
     --overwrite_cache \
     --model_name_or_path THUDM/chatglm-6b \
-    --output_dir output/aiops-chatglm-6b-pt-$PRE_SEQ_LEN-$LR \
+    --output_dir output/aiops-chatglm-6b-pt-$PRE_SEQ_LEN-$LR-0629 \
     --overwrite_output_dir \
-    --max_source_length 256 \
+    --max_source_length 400 \
     --max_target_length 16 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 1 \

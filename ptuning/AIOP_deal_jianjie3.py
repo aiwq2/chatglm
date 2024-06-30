@@ -6,7 +6,7 @@ import numpy as np
 timestamp=np.load('AIOPS/real_timestamp_3.npy') # (2220,)
 labels_timestamp=np.load('AIOPS/real_label_3.npy') # (2220,)
 labels_node=np.load('AIOPS/labels_nodes_3.npy')# (2220, 17)
-nodes=np.load('AIOPS/real_node_3.npy') # (2220, 17, 6, 124)
+nodes=np.load('AIOPS/real_node_3.npy') # (2220, 17, 124, 6)
 adjcent=np.load('AIOPS/total_A.npy') # (17,17)
 
 nodes=nodes.transpose(0,1,3,2) # (2220, 17, 6, 124)
@@ -70,8 +70,8 @@ for index,(time,node_metric_timerange,label) in enumerate(list(zip(timestamp,nod
             up_list=[]
             down_list=[]
             for index,(metric_value_now,metric_value_last) in enumerate(zip(metrics_values_list,metrics_last_list)):
-                # 目前这版差值要大于1.0才进行统计
-                if math.fabs(metric_value_last-metric_value_now)>1.0:
+                # 目前这版差值要大于2.0才进行统计
+                if math.fabs(metric_value_last-metric_value_now)>2.0:
                     flag=1
                     diff=metric_value_now-metric_value_last
                     if diff>0:
@@ -114,19 +114,43 @@ print(len(train_nodes_prompt_list))
 dev_nodse_prompt_list=nodes_prompt_list[train_num_split_point:]
 print(len(dev_nodse_prompt_list))
 
+# 减少一些训练集中正常样本数量，维持训练集中normal:abnormal的比例为1:5
+label_0_list=[]
+label_1_list=[]
+for csd in train_nodes_prompt_list:
+    lb=csd['summary']
+    # 去除掉prompt的前面的冗余部分
+    csd['content']=''.join(csd['content'].split(':')[1:])
+    if '0' in lb:
+        label_0_list.append(csd)
+    elif '1' in lb:
+        label_1_list.append(csd)
+    else:
+        print('error happend')
+normal_should_count=len(label_1_list)*8
+label_0_list=label_0_list[:normal_should_count]
+train_nodes_prompt_list=np.array(label_1_list+label_0_list)
+np.random.seed(42)
+np.random.shuffle(train_nodes_prompt_list)
+print(len(train_nodes_prompt_list))
 
-with open('AIOPS/jianjie3/train_jianjie3.json','w',encoding='utf-8') as f:
+
+with open('AIOPS/jianjie3/train_jianjie3_2.json','w',encoding='utf-8') as f:
     for prompt_finish in train_nodes_prompt_list:
         f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
 
-with open('AIOPS/jianjie3/dev_jianjie3.json','w',encoding='utf-8') as f:
+for csd in dev_nodse_prompt_list:
+    # 去除掉prompt的前面的冗余部分
+    csd['content']=''.join(csd['content'].split(':')[1:])
+
+with open('AIOPS/jianjie3/dev_jianjie3_2.json','w',encoding='utf-8') as f:
     for prompt_finish in dev_nodse_prompt_list:
         f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
 
 
 
-with open('AIOPS/jianjie3/content_example_jianjie3.txt','w',encoding='utf-8') as f:
-    f.write(nodes_prompt_list[0]['content'])
+# with open('AIOPS/jianjie3/content_example_jianjie3.txt','w',encoding='utf-8') as f:
+#     f.write(nodes_prompt_list[0]['content'])
 
 
 
