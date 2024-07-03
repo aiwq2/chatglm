@@ -126,9 +126,9 @@ preds=[]
 with open('result.txt','r') as f:
     for line in f.readlines():
         line=line.strip()
-        if line.startswith('labels'):
+        if line.startswith('bert_labels'):
             labels.extend(line.split(':')[1].split(','))
-        if line.startswith('pred'):
+        if line.startswith('bert_pred'):
             preds.extend(line.split(':')[1].split(','))
 
 labels_group=[]
@@ -151,12 +151,14 @@ accuracy=accuracy_score(labels_group,preds_group)
 precision=precision_score(labels_group,preds_group)
 recall=recall_score(labels_group,preds_group)
 report=classification_report(labels_group,preds_group)
+matrix=confusion_matrix(labels_group,preds_group)
 
 print(f'accuracy:{accuracy:.2f}')
 print(f'precision:{precision:.2f}')
 print(f'recall:{recall:.2f}')
 print('report:')
 print(report)
+print(matrix.T)
 
 # ---------------------------------------------------------
 

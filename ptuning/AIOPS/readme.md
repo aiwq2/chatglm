@@ -93,3 +93,31 @@ report:
     accuracy                           0.94       985
    macro avg       0.95      0.92      0.93       985
 weighted avg       0.94      0.94      0.94       985
+
+
+
+- bert的单节点最好指标(label修正前)
+              precision    recall  f1-score   support
+
+           0       1.00      0.98      0.99       967
+           1       0.63      0.88      0.73        33
+
+    accuracy                           0.98      1000
+   macro avg       0.81      0.93      0.86      1000
+weighted avg       0.98      0.98      0.98      1000
+
+[[950   4]
+ [ 17  29]]
+
+ - bert的多节点最好指标(label修正前)
+              precision    recall  f1-score   support
+
+           0       0.90      0.74      0.81       438
+           1       0.82      0.94      0.87       545
+
+    accuracy                           0.85       983
+   macro avg       0.86      0.84      0.84       983
+weighted avg       0.86      0.85      0.85       983
+
+[[323  34]
+ [115 511]]

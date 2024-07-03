@@ -3,10 +3,10 @@ import os
 import json
 import numpy as np
 
-timestamp=np.load('AIOPS/real_timestamp_3.npy') # (2220,)
-labels_timestamp=np.load('AIOPS/real_label_3.npy') # (2220,)
-labels_node=np.load('AIOPS/labels_nodes_3.npy')# (2220, 17)
-nodes=np.load('AIOPS/real_node_3.npy') # (2220, 17, 124, 6)
+timestamp=np.load('AIOPS/npy3/real_timestamp_3.npy') # (2220,)
+labels_timestamp=np.load('AIOPS/npy3/real_label_3.npy') # (2220,)
+labels_node=np.load('AIOPS/npy3/labels_nodes_3.npy')# (2220, 17)
+nodes=np.load('AIOPS/npy3/real_node_3.npy') # (2220, 17, 124, 6)
 adjcent=np.load('AIOPS/total_A.npy') # (17,17)
 
 nodes=nodes.transpose(0,1,3,2) # (2220, 17, 6, 124)
@@ -135,17 +135,17 @@ np.random.shuffle(train_nodes_prompt_list)
 print(len(train_nodes_prompt_list))
 
 
-with open('AIOPS/jianjie3/train_jianjie3_2.json','w',encoding='utf-8') as f:
-    for prompt_finish in train_nodes_prompt_list:
-        f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
+# with open('AIOPS/jianjie3/train_jianjie3_2.json','w',encoding='utf-8') as f:
+#     for prompt_finish in train_nodes_prompt_list:
+#         f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
 
-for csd in dev_nodse_prompt_list:
-    # 去除掉prompt的前面的冗余部分
-    csd['content']=''.join(csd['content'].split(':')[1:])
+# for csd in dev_nodse_prompt_list:
+#     # 去除掉prompt的前面的冗余部分
+#     csd['content']=''.join(csd['content'].split(':')[1:])
 
-with open('AIOPS/jianjie3/dev_jianjie3_2.json','w',encoding='utf-8') as f:
-    for prompt_finish in dev_nodse_prompt_list:
-        f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
+# with open('AIOPS/jianjie3/dev_jianjie3_2.json','w',encoding='utf-8') as f:
+#     for prompt_finish in dev_nodse_prompt_list:
+#         f.write(json.dumps(prompt_finish,ensure_ascii=False)+'\n')
 
 
 
