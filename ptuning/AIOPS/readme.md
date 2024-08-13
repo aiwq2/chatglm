@@ -4,6 +4,7 @@
 - train_jianjie2:目前已经跑通过一次的版本，里面的数据依照时间间隔3之差值来构造，低于1.0的差值直接忽略，label为某个时刻的label
 - train_jinanjie3：里面的数据依照时间间隔6（因为故障的持续时间为5分钟）的差值来构造，低于2.0的差值直接忽略，prompt去掉了前面冗余的话，直接从数值比较开始。训练数据按照abnormal:noraml=1:8的比例进行组织，其中abnormal一共904条数据，所有数据一共8136条。label为某个时刻的label某个节点的label，并且验证集不能随机划分必须按照一定的顺序，也就是说相当于6个要为1组。dev_jianjie3没有去掉冗余的话，且差值阈值为1，dev_jianjie3_2去掉了冗余的话，且差值阈值为2
 - train_jianjie4:与3不同的是进行了特征裁剪，同时指标名和值之间用冒号分割，3后续可以尝试一下将值和指标名用冒号分割
+- jianjie3_rootcause_analyze文件夹是将jianjie3文件夹下的train_jianjie3.json和dev_jianjie3_2.json中波动较大的异常指标作为根因分析加入到summary字段中，形成dev_jianjie3_2_final.json和train_jianjie3_final.json，目前还没有设置波动阈值，这个文件夹下还有一些其他文件例如rca相关的，是将所以异常数据拿出来进行简单分析的中间文件。prompt.py记录了即将传入大模型的prompt
 
 目前比较好的实验效果：
 1. jinajie3/train_jianjie3，模型路径为ptuning/output/aiops-chatglm-6b-pt-128-2e-2-0628/checkpoint-1000，bash.sh参数如下
