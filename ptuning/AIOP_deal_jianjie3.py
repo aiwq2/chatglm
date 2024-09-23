@@ -45,7 +45,7 @@ prompt_prefix+=prompt_metric
 # print(prompt_prefix)
 
 nodes_prompt_list=[]
-for index,(time,node_metric_timerange,label) in enumerate(list(zip(timestamp,nodes,labels_node))): # nodes的shape为 (1534, 17, 6, 124),labels_node的shape为（1534，17）
+for index,(time,node_metric_timerange,label) in enumerate(list(zip(timestamp,nodes,labels_node))): # nodes的shape为 (2220, 17, 6, 124),labels_node的shape为（2220，17）
     prompt_element=''
     prompt1=f'在时间窗口{time},共包含{len(node_metric_timerange[0])}个时刻:'
     prompt_element+=prompt1
